@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Formulário de parceiros VG</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      background: #001432;
+    }
+
+    h1 {
+      text-align: center;
+      color: #f7f4f4;
+    }
+
+    form {
+      background: #fff;
+      padding: 20px;
+      border-radius: 5px;
+    }
+
+    .etapa {
+      display: none;
+    }
+
+    .etapa.active {
+      display: block;
+    }
+
+    label {
+      display: block;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+
+    input,
+    textarea,
+    select {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+      box-sizing: border-box;
+    }
+
+    button {
+      margin: 20px 10px 0 0;
+      padding: 10px 20px;
+      background: #007bff;
+      border: none;
+      color: #fff;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #0056b3;
+    }
+
+    .logo {
+      display: block;
+      margin: 0 auto 20px;
+      max-width: 100px;
+    }
+
+    .error {
+      color: red;
+      font-size: 12px;
+    }
+
+    .socio-block {
+      margin: 15px 0;
+      padding: 10px;
+      background: #f1f1f1;
+      border-radius: 5px;
+    }
+
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+  <img src="logovg.png" alt="Logo" class="logo">
+  <h1>Formulário de parceiros VG</h1>
+
+  <form action="https://formspree.io/f/moevblla" method="POST" enctype="multipart/form-data"
+    onsubmit="return validarEnvio()">
+
+    <!-- ETAPA 1 -->
+    <div class="etapa active">
+      <h2>Etapa 1: Dados da Empresa</h2>
+      <label>Razão Social:</label>
+      <input type="text" name="Razao_Social" required>
+      <span class="error"></span>
+
+      <label>Nome Fantasia:</label>
+      <input type="text" name="Nome_Fantasia" required>
+      <span class="error"></span>
+
+      <label>Endereço Completo:</label>
+      <textarea name="Endereco_Completo" rows="2" required></textarea>
+      <span class="error"></span>
+
+      <label>Celular:</label>
+      <input type="text" name="Celular" required>
+      <span class="error"></span>
+
+      <label>E-mail:</label>
+      <input type="email" name="Email" required>
+      <span class="error"></span>
+
+      <label>CNPJ:</label>
+      <input type="text" name="CNPJ" required>
+      <span class="error"></span>
+
+      <label>Inscrição Estadual:</label>
+      <input type="text" name="Inscricao_Estadual" required>
+      <span class="error"></span>
+
+      <label>Inscrição Municipal:</label>
+      <input type="text" name="Inscricao_Municipal" required>
+      <span class="error"></span>
+
+      <label>Cidade e Estado de Atendimento:</label>
+      <input type="text" name="Cidade_Estado_Atendimento" required>
+      <span class="error"></span>
+
+      <button type="button" onclick="nextEtapa()">Próximo</button>
+    </div>
+
+    <!-- ETAPA 2 -->
+    <div class="etapa">
+      <h2>Etapa 2: Dados Profissionais e Sócios</h2>
+
+      <label>Proprietário:</label>
+      <input type="text" name="Proprietario" required>
+      <span class="error"></span>
+
+      <label>CPF do Proprietário:</label>
+      <input type="text" name="CPF_Proprietario" required>
+      <span class="error"></span>
+
+      <label>Você tem sócio?</label>
+      <select id="temSocio" name="Tem_Socio" onchange="toggleSocio()">
+        <option value="Não">Não</option>
+        <option value="Sim">Sim</option>
+      </select>
+      <span class="error"></span>
+
+      <div id="socioContainer" class="hidden">
+        <div class="socio-block">
+          <label>Nome do Sócio:</label>
+          <input type="text" name="Nome_Socio[]">
+          <span class="error"></span>
+
+          <label>CPF do Sócio:</label>
+          <input type="text" name="CPF_Socio[]">
+          <span class="error"></span>
+
+          <label>Data de Nascimento do Sócio:</label>
+          <input type="date" name="Data_Nascimento_Socio[]">
+          <span class="error"></span>
+        </div>
+        <button type="button" onclick="adicionarSocio()">Adicionar Outro Sócio</button>
+      </div>
+
+      <button type="button" onclick="prevEtapa()">Anterior</button>
+      <button type="button" onclick="nextEtapa()">Próximo</button>
+    </div>
+
+    <!-- ETAPA 3 -->
+    <div class="etapa">
+      <h2>Etapa 3: Informações Adicionais</h2>
+
+      <label>É AUTORIZADO DE OUTRAS MARCAS?</label>
+      <select id="autorizadoMarcas" name="Autorizado_Marcas" onchange="toggleField('autorizadoMarcas', 'quaisMarcas')">
+        <option value="Não">Não</option>
+        <option value="Sim">Sim</option>
+      </select>
+      <span class="error"></span>
+
+      <div id="quaisMarcas" class="hidden">
+        <label>Quais?</label>
+        <input type="text" name="Quais_Marcas">
+        <span class="error"></span>
+      </div>
+
+      <label>POSSUI VEÍCULOS DE TRABALHO?</label>
+      <select id="veiculos" name="Possui_Veiculos" onchange="toggleField('veiculos', 'quantosVeiculos')">
+        <option value="Não">Não</option>
+        <option value="Sim">Sim</option>
+      </select>
+      <span class="error"></span>
+
+      <div id="quantosVeiculos" class="hidden">
+        <label>Quantos?</label>
+        <input type="number" name="Quantidade_Veiculos" min="1">
+        <span class="error"></span>
+      </div>
+
+      <label>POSSUI COLABORADORES?</label>
+      <select id="colaboradores" name="Possui_Colaboradores"
+        onchange="toggleField('colaboradores', 'quantosColaboradores')">
+        <option value="Não">Não</option>
+        <option value="Sim">Sim</option>
+      </select>
+      <span class="error"></span>
+
+      <div id="quantosColaboradores" class="hidden">
+        <label>Quantos?</label>
+        <input type="number" name="Quantidade_Colaboradores" min="1">
+        <span class="error"></span>
+      </div>
+
+      <label>POSSUI LOJA FÍSICA?</label>
+      <select name="Possui_Loja_Fisica">
+        <option value="Não">Não</option>
+        <option value="Sim">Sim</option>
+      </select>
+      <span class="error"></span>
+
+      <button type="button" onclick="prevEtapa()">Anterior</button>
+      <button type="button" onclick="nextEtapa()">Próximo</button>
+    </div>
+
+    <!-- ETAPA 4 -->
+    <div class="etapa">
+      <h2>Etapa 4: Documentos da Empresa</h2>
+
+      <label>Cartão de Inscrição CNPJ:</label>
+      <input type="file" name="Cartao_CNPJ" accept=".jpg,.jpeg,.png,.pdf" required>
+      <span class="error"></span>
+
+      <label>Foto Interna da Refrigeração da Loja:</label>
+      <input type="file" name="Foto_Interna" accept=".jpg,.jpeg,.png,.pdf" required>
+      <span class="error"></span>
+
+      <label>Foto Externa da Refrigeração da Loja:</label>
+      <input type="file" name="Foto_Externa" accept=".jpg,.jpeg,.png,.pdf" required>
+      <span class="error"></span>
+
+      <label>Comprovante de Endereço:</label>
+      <input type="file" name="Comprovante_Endereco" accept=".jpg,.jpeg,.png,.pdf" required>
+      <span class="error"></span>
+
+      <label>Contrato Social:</label>
+      <input type="file" name="Contrato_Social" accept=".jpg,.jpeg,.png,.pdf" required>
+      <span class="error"></span>
+
+      <label>Inscrição Estadual e/ou Municipal:</label>
+      <input type="file" name="Inscricao_Estadual_Municipal" accept=".jpg,.jpeg,.png,.pdf" required>
+      <span class="error"></span>
+
+      <label>Cartão de Inscrição de Contribuinte SEFAZ:</label>
+      <input type="file" name="Cartao_SEFAZ" accept=".jpg,.jpeg,.png,.pdf" required>
+      <span class="error"></span>
+
+      <button type="button" onclick="prevEtapa()">Anterior</button>
+      <button type="submit">Enviar</button>
+    </div>
+
+    <input type="hidden" name="_subject" value="Novo Credenciamento Parceiros VG">
+  </form>
+
+  <script>
+    let currentEtapa = 0;
+    const etapas = document.querySelectorAll('.etapa');
+
+    function showEtapa(index) {
+      etapas.forEach((etapa, i) => {
+        etapa.classList.toggle('active', i === index);
+      });
+    }
+
+    function validarEtapaAtual() {
+      const etapaAtual = etapas[currentEtapa];
+      const inputs = etapaAtual.querySelectorAll('input, textarea, select');
+      let valido = true;
+
+      inputs.forEach(input => {
+        const errorSpan = input.nextElementSibling;
+        if (errorSpan && errorSpan.classList.contains('error')) {
+          errorSpan.textContent = '';
+        }
+
+        if (input.hasAttribute('required') && input.offsetParent !== null) {
+          if ((input.type === 'file' && (!input.files || input.files.length === 0)) ||
+              (input.type !== 'file' && !input.value.trim())) {
+            if (errorSpan && errorSpan.classList.contains('error')) {
+              errorSpan.textContent = 'Este campo é obrigatório.';
+            }
+            valido = false;
+          } else {
+            if (input.name === "Celular") {
+              const celularDigits = input.value.replace(/\D/g, '');
+              if (celularDigits.length < 10 || celularDigits.length > 11) {
+                errorSpan.textContent = 'Número de celular incompleto.';
+                valido = false;
+              }
+            }
+            if (input.name === "CNPJ") {
+              const cnpjDigits = input.value.replace(/\D/g, '');
+              if (cnpjDigits.length !== 14) {
+                errorSpan.textContent = 'CNPJ incompleto.';
+                valido = false;
+              }
+            }
+            if (input.name === "Email") {
+              if (!input.value.includes('@')) {
+                if (errorSpan && errorSpan.classList.contains('error')) {
+                  errorSpan.textContent = 'E-mail deve conter @.';
+                }
+                valido = false;
+              }
+            }
+          }
+        }
+      });
+
+      if (currentEtapa === 1) {
+        const temSocio = document.getElementById('temSocio').value;
+        if (temSocio === 'Sim') {
+          const socioContainer = document.getElementById('socioContainer');
+          const socioInputs = socioContainer.querySelectorAll('.socio-block input');
+          socioInputs.forEach(input => {
+            const errorSpan = input.nextElementSibling;
+            if (errorSpan && errorSpan.classList.contains('error')) {
+              errorSpan.textContent = '';
+            }
+            if (!input.value.trim()) {
+              if (errorSpan && errorSpan.classList.contains('error')) {
+                errorSpan.textContent = 'Preencha todos os campos do sócio.';
+              }
+              valido = false;
+            } else {
+              if (input.name === "CPF_Socio[]") {
+                const cpfDigits = input.value.replace(/\D/g, '');
+                if (cpfDigits.length !== 11) {
+                  if (errorSpan && errorSpan.classList.contains('error')) {
+                    errorSpan.textContent = 'CPF do sócio incompleto.';
+                  }
+                  valido = false;
+                }
+              }
+            }
+          });
+        }
+
+        const cpfProprietario = etapaAtual.querySelector('input[name="CPF_Proprietario"]');
+        if (cpfProprietario) {
+          const cpfDigits = cpfProprietario.value.replace(/\D/g, '');
+          const errorSpan = cpfProprietario.nextElementSibling;
+          if (errorSpan && errorSpan.classList.contains('error')) {
+            errorSpan.textContent = '';
+          }
+          if (cpfDigits.length !== 11) {
+            if (errorSpan && errorSpan.classList.contains('error')) {
+              errorSpan.textContent = 'CPF do proprietário incompleto.';
+            }
+            valido = false;
+          }
+        }
+      }
+
+      if (currentEtapa === 2) {
+        const autorizadoMarcas = document.getElementById('autorizadoMarcas').value;
+        if (autorizadoMarcas === 'Sim') {
+          const quaisMarcasInput = document.querySelector('input[name="Quais_Marcas"]');
+          const errorSpan = quaisMarcasInput.nextElementSibling;
+          if (errorSpan && errorSpan.classList.contains('error')) {
+            errorSpan.textContent = '';
+          }
+          if (!quaisMarcasInput.value.trim()) {
+            if (errorSpan && errorSpan.classList.contains('error')) {
+              errorSpan.textContent = 'Preencha este campo.';
+            }
+            valido = false;
+          }
+        }
+
+        const veiculos = document.getElementById('veiculos').value;
+        if (veiculos === 'Sim') {
+          const quantosVeiculosInput = document.querySelector('input[name="Quantidade_Veiculos"]');
+          const errorSpan = quantosVeiculosInput.nextElementSibling;
+          if (errorSpan && errorSpan.classList.contains('error')) {
+            errorSpan.textContent = '';
+          }
+          if (!quantosVeiculosInput.value.trim()) {
+            if (errorSpan && errorSpan.classList.contains('error')) {
+              errorSpan.textContent = 'Preencha este campo.';
+            }
+            valido = false;
+          }
+        }
+
+        const colaboradores = document.getElementById('colaboradores').value;
+        if (colaboradores === 'Sim') {
+          const quantosColaboradoresInput = document.querySelector('input[name="Quantidade_Colaboradores"]');
+          const errorSpan = quantosColaboradoresInput.nextElementSibling;
+          if (errorSpan && errorSpan.classList.contains('error')) {
+            errorSpan.textContent = '';
+          }
+          if (!quantosColaboradoresInput.value.trim()) {
+            if (errorSpan && errorSpan.classList.contains('error')) {
+              errorSpan.textContent = 'Preencha este campo.';
+            }
+            valido = false;
+          }
+        }
+      }
+
+      if (currentEtapa === 3) {
+        const fileInputs = etapaAtual.querySelectorAll('input[type="file"]');
+        fileInputs.forEach(input => {
+          const errorSpan = input.nextElementSibling;
+          if (errorSpan && errorSpan.classList.contains('error')) {
+            errorSpan.textContent = '';
+          }
+          if (!input.files || input.files.length === 0) {
+            if (errorSpan && errorSpan.classList.contains('error')) {
+              errorSpan.textContent = 'É obrigatório anexar este documento.';
+            }
+            valido = false;
+          }
+        });
+      }
+
+      return valido;
+    }
+
+    function nextEtapa() {
+      if (validarEtapaAtual()) {
+        if (currentEtapa < etapas.length - 1) {
+          currentEtapa++;
+          showEtapa(currentEtapa);
+        }
+      }
+    }
+
+    function prevEtapa() {
+      if (currentEtapa > 0) {
+        currentEtapa--;
+        showEtapa(currentEtapa);
+      }
+    }
+
+    function toggleSocio() {
+      const temSocio = document.getElementById('temSocio').value;
+      document.getElementById('socioContainer').classList.toggle('hidden', temSocio !== "Sim");
+    }
+
+    function adicionarSocio() {
+      const container = document.getElementById('socioContainer');
+      const botaoAdicionar = container.querySelector('button');
+      const socioBlock = document.createElement('div');
+      socioBlock.className = 'socio-block';
+      socioBlock.innerHTML = `
+        <label>Nome do Sócio:</label>
+        <input type="text" name="Nome_Socio[]"><span class="error"></span>
+        <label>CPF do Sócio:</label>
+        <input type="text" name="CPF_Socio[]"><span class="error"></span>
+        <label>Data de Nascimento do Sócio:</label>
+        <input type="date" name="Data_Nascimento_Socio[]"><span class="error"></span>
+      `;
+      container.insertBefore(socioBlock, botaoAdicionar);
+    }
+
+    function toggleField(selectId, fieldId) {
+      const select = document.getElementById(selectId);
+      const field = document.getElementById(fieldId);
+      field.classList.toggle('hidden', select.value !== "Sim");
+    }
+
+    function validarEnvio() {
+      return validarEtapaAtual();
+    }
+
+    showEtapa(currentEtapa);
+  </script>
+</body>
+
+</html>
